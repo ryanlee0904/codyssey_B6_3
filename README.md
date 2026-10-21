@@ -50,7 +50,6 @@ uvicorn app.main:app --reload
 > 포트를 바꿔 실행하세요: `uvicorn app.main:app --reload --port 8080` → <http://127.0.0.1:8080>
 
 서버가 처음 뜰 때 테이블 생성과 테스트 데이터 입력이 자동으로 실행됩니다.
-데이터를 초기화하려면 서버를 끄고 `shop.db` 파일을 삭제한 뒤 다시 실행하세요.
 
 ### PyCharm
 
@@ -74,7 +73,7 @@ uvicorn app.main:app --reload
 | `buyer1` | `buyer1234` | 김구매 | 구매자: 주문 → 주문 취소, 배송중 주문 수령 확인 (배송중 주문 1건 미리 생성됨) |
 | `seller1` | `seller1234` | 이판매 | 판매자: 상품 4개 보유, 들어온 주문 배송 시작 |
 
-`/signup` 에서 새 계정을 만들 수도 있습니다.
+`/signup` 에서 새 계정을 만듬
 
 ---
 
@@ -206,7 +205,7 @@ mini-shop/
 
 ## 10. 설계 설명
 
-> 발표·리뷰용 예상 질문과 답변은 [`docs/QA.md`](docs/QA.md) 에 정리했습니다.
+> 예상 질문과 답변은 [`docs/QA.md`](docs/QA.md)
 
 ### 10-1. Depends 기반 인증/인가 흐름
 
