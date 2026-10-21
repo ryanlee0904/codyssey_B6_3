@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}판매 관리{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>판매 관리 <span class="muted small">내 상품에 들어온 주문</span></h1>
+  <a class="btn btn-outline" href="/app/goods/new">+ 상품 등록</a>
+</div>
+
+<table class="table">
+  <thead>
+    <tr><th>주문번호</th><th>상품</th><th>주문자</th><th>수량</th><th>금액</th><th>상태</th><th></th></tr>
+  </thead>
+  <tbody>
+  {% for o in orders %}
+    <tr>
+      <td><a href="/app/orders/{{ o.id }}">#{{ o.id }}</a></td>
+      <td><a href="/app/goods/{{ o.goods.id }}">{{ o.goods.name }}</a></td>
+      <td>{{ o.buyer.nickname }}</td>
+      <td>{{ o.quantity }}</td>
+      <td>{{ o.total_price|won }}</td>
+      <td><span class="badge status-{{ o.status.value|lower }}">{{ o.status.label }}</span></td>
+      <td>
+        {% if o.status == OrderStatus.ORDERED %}
+          <form method="post" action="/app/orders/{{ o.id }}/ship" class="inline">
+            <button class="btn btn-sm">배송 시작</button>
+          </form>
+        {% endif %}
+      </td>
+    </tr>
+  {% else %}
+    <tr><td colspan="7" class="muted center">아직 들어온 주문이 없습니다.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

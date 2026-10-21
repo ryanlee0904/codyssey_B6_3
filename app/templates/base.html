@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ APP_NAME }}{% endblock %} · {{ APP_NAME }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <div class="container topbar-inner">
+    <a class="brand" href="/">🛒 {{ APP_NAME }}</a>
+
+    {# ── 인증 상태에 따른 UI 변화 ── #}
+    {% if current_user %}
+      <nav class="menu">
+        <a href="/app/goods">상품</a>
+        <a href="/app/orders">주문 내역</a>
+        <a href="/app/sales">판매 관리</a>
+        <a href="/app/me">마이페이지</a>
+      </nav>
+      <div class="userbox">
+        <span class="welcome"><strong>{{ current_user.nickname }}</strong>님 환영합니다</span>
+        <form method="post" action="/logout" class="inline">
+          <button type="submit" class="btn btn-outline btn-sm">로그아웃</button>
+        </form>
+      </div>
+    {% else %}
+      <nav class="menu"></nav>
+      <div class="userbox">
+        <a class="btn btn-sm" href="/login">로그인</a>
+        <a class="btn btn-outline btn-sm" href="/signup">회원가입</a>
+      </div>
+    {% endif %}
+  </div>
+</header>
+
+<main class="container">
+  {% for f in flashes %}
+    <div class="alert alert-{{ f.category }}">{{ f.message }}</div>
+  {% endfor %}
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="container footer">FastAPI · SQLAlchemy · Jinja2 SSR 미니 쇼핑몰</footer>
+</body>
+</html>

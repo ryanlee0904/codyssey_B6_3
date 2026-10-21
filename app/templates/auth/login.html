@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}로그인{% endblock %}
+{% block content %}
+<div class="narrow card">
+  <h1>로그인</h1>
+  {% if error %}<div class="alert alert-error">❌ 로그인 실패: {{ error }}</div>{% endif %}
+  <form method="post" action="/login" class="form">
+    <input type="hidden" name="next" value="{{ next }}">
+    <label>아이디
+      <input name="username" value="{{ username }}" autocomplete="username" required autofocus>
+    </label>
+    <label>비밀번호
+      <input type="password" name="password" autocomplete="current-password" required>
+    </label>
+    <button type="submit" class="btn btn-block">로그인</button>
+  </form>
+  <p class="muted small">테스트 계정: <code>buyer1 / buyer1234</code>, <code>seller1 / seller1234</code></p>
+  <p class="small">계정이 없나요? <a href="/signup">회원가입</a></p>
+</div>
+{% endblock %}

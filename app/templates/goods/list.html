@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}상품 목록{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>상품 목록</h1>
+  <a class="btn" href="/app/goods/new">+ 상품 등록</a>
+</div>
+
+<table class="table">
+  <thead>
+    <tr><th>#</th><th>상품명</th><th>가격</th><th>재고</th><th>판매자</th></tr>
+  </thead>
+  <tbody>
+  {% for g in goods_list %}
+    <tr>
+      <td>{{ g.id }}</td>
+      <td><a href="/app/goods/{{ g.id }}">{{ g.name }}</a>
+        {% if g.seller_id == current_user.id %}<span class="badge badge-mine">내 상품</span>{% endif %}</td>
+      <td>{{ g.price|won }}</td>
+      <td>{% if g.is_sold_out %}<span class="badge status-cancelled">품절</span>{% else %}{{ g.stock }}개{% endif %}</td>
+      {# Goods → User (N:1) 연관관계로 판매자 닉네임 출력 #}
+      <td>{{ g.seller.nickname }}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="5" class="muted center">등록된 상품이 없습니다.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

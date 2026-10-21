@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}홈{% endblock %}
+{% block content %}
+<section class="hero">
+  {% if current_user %}
+    <h1>{{ current_user.nickname }}님, 다시 오신 걸 환영해요 👋</h1>
+    <p>상품을 둘러보고 주문하거나, 주문 상태를 확인해 보세요.</p>
+    <div class="actions">
+      <a class="btn" href="/app/goods">상품 보러 가기</a>
+      <a class="btn btn-outline" href="/app/orders">내 주문 내역</a>
+    </div>
+  {% else %}
+    <h1>간단한 쇼핑몰, Mini Shop</h1>
+    <p>로그인하면 상품 상세 보기, 주문, 주문 취소/수령 확인을 할 수 있어요.</p>
+    <div class="actions">
+      <a class="btn" href="/login">로그인하고 시작하기</a>
+      <a class="btn btn-outline" href="/signup">회원가입</a>
+    </div>
+  {% endif %}
+</section>
+
+<h2>새로 들어온 상품</h2>
+<div class="grid">
+  {% for g in latest_goods %}
+    <div class="card">
+      <h3>{{ g.name }}</h3>
+      <p class="price">{{ g.price|won }}</p>
+      <p class="muted">판매자: {{ g.seller.nickname }}</p>
+      {% if current_user %}
+        <a class="btn btn-sm" href="/app/goods/{{ g.id }}">자세히 보기</a>
+      {% else %}
+        <a class="btn btn-outline btn-sm" href="/app/goods/{{ g.id }}">🔒 로그인 후 상세 보기</a>
+      {% endif %}
+    </div>
+  {% else %}
+    <p class="muted">등록된 상품이 없습니다.</p>
+  {% endfor %}
+</div>
+{% endblock %}

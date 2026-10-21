@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}{{ goods.name }}{% endblock %}
+{% block content %}
+<p><a href="/app/goods">← 상품 목록</a></p>
+
+<div class="card">
+  <h1>{{ goods.name }}</h1>
+  <p class="price big">{{ goods.price|won }}</p>
+  <p>{{ goods.description }}</p>
+  <dl class="meta">
+    <dt>판매자</dt><dd>{{ goods.seller.nickname }} ({{ goods.seller.username }})</dd>
+    <dt>재고</dt><dd>{% if goods.is_sold_out %}<span class="badge status-cancelled">품절</span>{% else %}{{ goods.stock }}개{% endif %}</dd>
+    <dt>등록일</dt><dd>{{ goods.created_at|dt }}</dd>
+  </dl>
+
+  {% if goods.seller_id == current_user.id %}
+    <form method="post" action="/app/goods/{{ goods.id }}/delete" class="inline"
+          onsubmit="return confirm('이 상품을 삭제할까요? (주문 이력이 있으면 삭제되지 않습니다)');">
+      <button class="btn btn-danger btn-sm">상품 삭제</button>
+    </form>
+  {% elif goods.is_sold_out %}
+    <p class="muted">품절된 상품은 주문할 수 없습니다.</p>
+  {% else %}
+    <form method="post" action="/app/orders" class="order-form">
+      <input type="hidden" name="goods_id" value="{{ goods.id }}">
+      <label>수량
+        <input type="number" name="quantity" value="1" min="1" max="{{ [goods.stock, 99]|min }}" required>
+      </label>
+      <button type="submit" class="btn">주문하기</button>
+    </form>
+  {% endif %}
+</div>
+
+{% if goods.seller_id == current_user.id %}
+  {# Goods → Order (1:N) 연관관계: 내 상품에 들어온 주문 목록 #}
+  <h2>이 상품의 주문 ({{ goods.orders|length }}건)</h2>
+  <table class="table">
+    <thead><tr><th>주문번호</th><th>주문자</th><th>수량</th><th>금액</th><th>상태</th><th></th></tr></thead>
+    <tbody>
+    {% for o in goods.orders %}
+      <tr>
+        <td><a href="/app/orders/{{ o.id }}">#{{ o.id }}</a></td>
+        <td>{{ o.buyer.nickname }}</td>
+        <td>{{ o.quantity }}</td>
+        <td>{{ o.total_price|won }}</td>
+        <td><span class="badge status-{{ o.status.value|lower }}">{{ o.status.label }}</span></td>
+        <td>
+          {% if o.status == OrderStatus.ORDERED %}
+            <form method="post" action="/app/orders/{{ o.id }}/ship" class="inline">
+              <button class="btn btn-sm">배송 시작</button>
+            </form>
+          {% endif %}
+        </td>
+      </tr>
+    {% else %}
+      <tr><td colspan="6" class="muted center">아직 주문이 없습니다.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endif %}
+{% endblock %}

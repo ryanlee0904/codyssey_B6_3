@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}마이페이지{% endblock %}
+{% block content %}
+{% set u = summary.user %}
+<h1>마이페이지</h1>
+
+<div class="card">
+  <dl class="meta">
+    <dt>아이디</dt><dd>{{ u.username }}</dd>
+    <dt>닉네임</dt><dd>{{ u.nickname }}</dd>
+    <dt>가입일</dt><dd>{{ u.created_at|dt }}</dd>
+    <dt>총 주문</dt><dd>{{ summary.order_count }}건 (구매 금액 {{ summary.total_spent|won }}, 취소 제외)</dd>
+  </dl>
+  <div class="stats">
+    {% for s, n in summary.status_counts.items() %}
+      <div class="stat"><span class="badge status-{{ s.value|lower }}">{{ s.label }}</span><b>{{ n }}</b></div>
+    {% endfor %}
+  </div>
+</div>
+
+{# User → Order (1:N) 연관관계: user.orders #}
+<h2>내 주문 ({{ u.orders|length }}건)</h2>
+<table class="table">
+  <thead><tr><th>주문번호</th><th>상품</th><th>금액</th><th>상태</th><th>주문일</th></tr></thead>
+  <tbody>
+  {% for o in u.orders %}
+    <tr>
+      <td><a href="/app/orders/{{ o.id }}">#{{ o.id }}</a></td>
+      <td>{{ o.goods.name }}</td>
+      <td>{{ o.total_price|won }}</td>
+      <td><span class="badge status-{{ o.status.value|lower }}">{{ o.status.label }}</span></td>
+      <td>{{ o.created_at|dt }}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="5" class="muted center">주문 내역이 없습니다.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{# User → Goods (1:N) 연관관계: user.goods, 그리고 Goods → Order (1:N) 로 주문 건수 #}
+<h2>내가 등록한 상품 ({{ u.goods|length }}개)</h2>
+<table class="table">
+  <thead><tr><th>상품</th><th>가격</th><th>재고</th><th>받은 주문</th></tr></thead>
+  <tbody>
+  {% for g in u.goods %}
+    <tr>
+      <td><a href="/app/goods/{{ g.id }}">{{ g.name }}</a></td>
+      <td>{{ g.price|won }}</td>
+      <td>{{ g.stock }}개</td>
+      <td>{{ g.orders|length }}건</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="4" class="muted center">등록한 상품이 없습니다. <a href="/app/goods/new">상품 등록</a></td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

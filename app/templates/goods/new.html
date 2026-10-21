@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}상품 등록{% endblock %}
+{% block content %}
+<div class="narrow card">
+  <h1>상품 등록</h1>
+  {% if error %}<div class="alert alert-error">{{ error }}</div>{% endif %}
+  <form method="post" action="/app/goods/new" class="form">
+    <label>상품명
+      <input name="name" value="{{ form.name or '' }}" required maxlength="100">
+    </label>
+    <label>설명
+      <textarea name="description" rows="3">{{ form.description or '' }}</textarea>
+    </label>
+    <label>가격 (원)
+      <input type="number" name="price" value="{{ form.price or '' }}" min="100" step="100" required>
+    </label>
+    <label>재고 (개)
+      <input type="number" name="stock" value="{{ form.stock if form.stock is not none else 10 }}" min="0" required>
+    </label>
+    <button type="submit" class="btn btn-block">등록하기</button>
+  </form>
+</div>
+{% endblock %}

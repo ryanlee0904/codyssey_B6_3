@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}주문 내역{% endblock %}
+{% block content %}
+<h1>내 주문 내역</h1>
+
+<div class="tabs">
+  <a href="/app/orders" class="{{ 'active' if not selected }}">전체</a>
+  {% for s in OrderStatus %}
+    <a href="/app/orders?status_filter={{ s.value }}" class="{{ 'active' if selected == s }}">{{ s.label }}</a>
+  {% endfor %}
+</div>
+
+<table class="table">
+  <thead>
+    <tr><th>주문번호</th><th>상품</th><th>판매자</th><th>수량</th><th>금액</th><th>상태</th><th>주문일</th></tr>
+  </thead>
+  <tbody>
+  {% for o in orders %}
+    <tr>
+      <td><a href="/app/orders/{{ o.id }}">#{{ o.id }}</a></td>
+      {# Order → Goods (N:1), Goods → User (N:1) 연관관계 출력 #}
+      <td><a href="/app/goods/{{ o.goods.id }}">{{ o.goods.name }}</a></td>
+      <td>{{ o.goods.seller.nickname }}</td>
+      <td>{{ o.quantity }}</td>
+      <td>{{ o.total_price|won }}</td>
+      <td><span class="badge status-{{ o.status.value|lower }}">{{ o.status.label }}</span></td>
+      <td>{{ o.created_at|dt }}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="7" class="muted center">주문 내역이 없습니다. <a href="/app/goods">상품 보러 가기</a></td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
